@@ -1,57 +1,127 @@
-// Importing the 'expect' function from the 'chai' library to perform assertions
 const { expect } = require('chai');
 const { describe, it, beforeEach, afterEach } = require('mocha');
-// Importing the NumbersValidator class from the relative path '../app/numbers-validator'
-// so we can test its methods.
 const NumbersValidator = require('../../app/numbers-validator');
 
-// 'describe' is used to group related tests together into a test suite.
-// Here, it describes a suite of tests for the 'isNumberEven' method of NumbersValidator class.
-describe('isNumberEven', () => {
-  // Declaring a variable 'validator' outside of the 'beforeEach' and 'it' blocks
-  // to make it accessible throughout this describe block.
+describe('NumbersValidator', () => {
   let validator;
 
-  // 'beforeEach' is a hook that runs before each test ('it' block) within this 'describe' block.
-  // It's usually used for setting up the test environment.
   beforeEach(() => {
-    // Instantiates a new NumbersValidator object before each test and assigns it to 'validator'
     validator = new NumbersValidator();
   });
 
-  // 'afterEach' is a hook that runs after each test. It is often used for cleanup activities.
   afterEach(() => {
-    // Sets the validator variable to null to clean up memory after each test
     validator = null;
   });
-  describe('positive test', () => {
-    it('should return true if number is even', () => {
-      // Using 'expect' to assert that the 'isNumberEven' method returns true when
-      // passed the even number 4. The '.to.be.equal(true)' is the actual assertion check.
-      const validatorResult = validator.isNumberEven(4);
-      expect(validatorResult).to.be.equal(true);
+
+  describe('isNumberEven', () => {
+    describe('positive tests', () => {
+      [2, 4, 100, 0, -6].forEach((n) => {
+        it(`should return true for even number ${n}`, () => {
+          expect(validator.isNumberEven(n)).to.be.equal(true);
+        });
+      });
+    });
+
+    describe('negative tests', () => {
+      [1, 5, 99, -3].forEach((n) => {
+        it(`should return false for odd number ${n}`, () => {
+          expect(validator.isNumberEven(n)).to.be.equal(false);
+        });
+      });
+
+      it('should return false for a non-integer number (2.5)', () => {
+        expect(validator.isNumberEven(2.5)).to.be.equal(false);
+      });
+
+      it('should throw an error when a string is provided', () => {
+        const input = 'four';
+        expect(() => validator.isNumberEven(input)).to.throw(
+          `[${input}] is not of type "Number" it is of type "${typeof input}"`,
+        );
+      });
+
+      [null, undefined, true].forEach((input) => {
+        it(`should throw an error when ${input} is provided`, () => {
+          expect(() => validator.isNumberEven(input)).to.throw('is not of type "Number"');
+        });
+      });
     });
   });
-  describe('negative test', () => {
-    it('should return true if number is even', () => {
-      // Using 'expect' to assert that the 'isNumberEven' method returns true when
-      // passed the even number 4. The '.to.be.equal(true)' is the actual assertion check.
-      const validatorResult = validator.isNumberEven(5);
-      expect(validatorResult).to.be.equal(false);
+////////////
+
+  describe('getEvenNumbersFromArray', () => {
+    it('should return only even numbers from an array', () => {
+      expect(validator.getEvenNumbersFromArray([1, 2, 3, 4, 5, 6])).to.deep.equal([2, 4, 6]);
     });
-    it('should  throw new error when provided not a Number value', () => {
-      // Using 'expect' to assert that the 'isNumberEven' method returns true when
-      // passed the even number 4. The '.to.be.equal(true)' is the actual assertion check.
-      const input = 'four';
-      expect(() => {
-        validator.isNumberEven(input);
-      }).to.throw(`[${input}] is not of type "Number" it is of type "${typeof input}"`);
+
+    it('should return an empty array when there are no even numbers', () => {
+      expect(validator.getEvenNumbersFromArray([1, 3, 5])).to.deep.equal([]);
+    });
+
+    it('should return an empty array for an empty array', () => {
+      expect(validator.getEvenNumbersFromArray([])).to.deep.equal([]);
+    });
+
+    it('should include 0 and negative even numbers', () => {
+      expect(validator.getEvenNumbersFromArray([-4, -3, 0, 7])).to.deep.equal([-4, 0]);
+    });
+
+    it('should throw an error when the array contains a non-number', () => {
+      expect(() => validator.getEvenNumbersFromArray([2, 'a', 4])).to.throw(
+        '[2,a,4] is not an array of "Numbers"',
+      );
+    });
+
+    it('should throw an error when the argument is not an array', () => {
+      expect(() => validator.getEvenNumbersFromArray('abc')).to.throw(
+        '[abc] is not an array of "Numbers"',
+      );
     });
   });
+///////////
 
-  // 'it' is used for individual test cases - it includes the actual test.
-  // The string argument describes what the test should do.
+  describe('isAllNumbers', () => {
+    it('should return true when all elements are numbers', () => {
+      expect(validator.isAllNumbers([1, 2.5, -3, 0])).to.be.equal(true);
+    });
 
-  // Additional tests would follow for different test cases, such as testing if an odd number
-  // returns false or if passing a non-number throws an error.
+    it('should return true for an empty array', () => {
+      expect(validator.isAllNumbers([])).to.be.equal(true);
+    });
+
+    it('should return false when at least one element is not a number', () => {
+      expect(validator.isAllNumbers([1, '2', 3])).to.be.equal(false);
+    });
+
+    it('should throw an error when the argument is not an array', () => {
+      expect(() => validator.isAllNumbers('abc')).to.throw('[abc] is not an array');
+    });
+
+    it('should throw an error when the argument is undefined', () => {
+      expect(() => validator.isAllNumbers(undefined)).to.throw('is not an array');
+    });
+  });
+///////////
+
+  describe('isInteger', () => {
+    [0, 7, -12].forEach((n) => {
+      it(`should return true for integer ${n}`, () => {
+        expect(validator.isInteger(n)).to.be.equal(true);
+      });
+    });
+
+    [2.5, -0.1].forEach((n) => {
+      it(`should return false for non-integer ${n}`, () => {
+        expect(validator.isInteger(n)).to.be.equal(false);
+      });
+    });
+
+    it('should throw an error when a string is provided', () => {
+      expect(() => validator.isInteger('5')).to.throw('[5] is not a number');
+    });
+
+    it('should throw an error when null is provided', () => {
+      expect(() => validator.isInteger(null)).to.throw('[null] is not a number');
+    });
+  });
 });
