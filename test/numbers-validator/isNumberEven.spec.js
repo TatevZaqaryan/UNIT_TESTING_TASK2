@@ -49,7 +49,8 @@ describe('NumbersValidator', () => {
   });
 ////////////
 
-  describe('getEvenNumbersFromArray', () => {
+describe('getEvenNumbersFromArray', () => {
+  describe('positive tests', () => {
     it('should return only even numbers from an array', () => {
       expect(validator.getEvenNumbersFromArray([1, 2, 3, 4, 5, 6])).to.deep.equal([2, 4, 6]);
     });
@@ -65,7 +66,9 @@ describe('NumbersValidator', () => {
     it('should include 0 and negative even numbers', () => {
       expect(validator.getEvenNumbersFromArray([-4, -3, 0, 7])).to.deep.equal([-4, 0]);
     });
+  });
 
+  describe('negative tests', () => {
     it('should throw an error when the array contains a non-number', () => {
       expect(() => validator.getEvenNumbersFromArray([2, 'a', 4])).to.throw(
         '[2,a,4] is not an array of "Numbers"',
@@ -78,9 +81,11 @@ describe('NumbersValidator', () => {
       );
     });
   });
+});
 ///////////
 
-  describe('isAllNumbers', () => {
+describe('isAllNumbers', () => {
+  describe('positive tests', () => {
     it('should return true when all elements are numbers', () => {
       expect(validator.isAllNumbers([1, 2.5, -3, 0])).to.be.equal(true);
     });
@@ -92,7 +97,9 @@ describe('NumbersValidator', () => {
     it('should return false when at least one element is not a number', () => {
       expect(validator.isAllNumbers([1, '2', 3])).to.be.equal(false);
     });
+  });
 
+  describe('negative tests', () => {
     it('should throw an error when the argument is not an array', () => {
       expect(() => validator.isAllNumbers('abc')).to.throw('[abc] is not an array');
     });
@@ -101,9 +108,11 @@ describe('NumbersValidator', () => {
       expect(() => validator.isAllNumbers(undefined)).to.throw('is not an array');
     });
   });
+});
 ///////////
 
-  describe('isInteger', () => {
+describe('isInteger', () => {
+  describe('positive tests', () => {
     [0, 7, -12].forEach((n) => {
       it(`should return true for integer ${n}`, () => {
         expect(validator.isInteger(n)).to.be.equal(true);
@@ -115,7 +124,9 @@ describe('NumbersValidator', () => {
         expect(validator.isInteger(n)).to.be.equal(false);
       });
     });
+  });
 
+  describe('negative tests', () => {
     it('should throw an error when a string is provided', () => {
       expect(() => validator.isInteger('5')).to.throw('[5] is not a number');
     });
@@ -124,4 +135,5 @@ describe('NumbersValidator', () => {
       expect(() => validator.isInteger(null)).to.throw('[null] is not a number');
     });
   });
+});
 });
