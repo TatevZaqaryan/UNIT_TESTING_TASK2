@@ -29,9 +29,14 @@ describe('NumbersValidator', () => {
         });
       });
 
-      it('should return false for a non-integer number (2.5)', () => {
-        expect(validator.isNumberEven(2.5)).to.be.equal(false);
+      [2.5, 0.1, NaN, Infinity, -Infinity].forEach((n) => {
+        it(`should return false for not-integare number, NAN  ${n}`, () => {
+          expect(validator.isNumberEven(n)).to.be.equal(false);
+        });
       });
+      // it('should return false for a non-integer number (2.5)', () => {
+      //   expect(validator.isNumberEven(2.5)).to.be.equal(false);
+      // });
 
       it('should throw an error when a string is provided', () => {
         const input = 'four';
@@ -119,7 +124,7 @@ describe('isInteger', () => {
       });
     });
 
-    [2.5, -0.1].forEach((n) => {
+    [2.5, -0.1, NaN, Infinity, -Infinity].forEach((n) => {
       it(`should return false for non-integer ${n}`, () => {
         expect(validator.isInteger(n)).to.be.equal(false);
       });
@@ -137,3 +142,6 @@ describe('isInteger', () => {
   });
 });
 });
+
+
+//npm i mocha mochawesome chai@4.x c8
